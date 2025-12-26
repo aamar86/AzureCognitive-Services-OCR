@@ -1,0 +1,11 @@
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\bin\Debug\net8.0\CleanArchitecture.OCR.Domain.deps.json
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\bin\Debug\net8.0\CleanArchitecture.OCR.Domain.dll
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\bin\Debug\net8.0\CleanArchitecture.OCR.Domain.pdb
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\obj\Debug\net8.0\CleanArchitecture.OCR.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\obj\Debug\net8.0\CleanArchitecture.OCR.Domain.AssemblyInfoInputs.cache
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\obj\Debug\net8.0\CleanArchitecture.OCR.Domain.AssemblyInfo.cs
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\obj\Debug\net8.0\CleanArchitecture.OCR.Domain.csproj.CoreCompileInputs.cache
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\obj\Debug\net8.0\CleanArchitecture.OCR.Domain.dll
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\obj\Debug\net8.0\refint\CleanArchitecture.OCR.Domain.dll
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\obj\Debug\net8.0\CleanArchitecture.OCR.Domain.pdb
+C:\Users\HP\Downloads\CleanArchitecture.OCR\src\CleanArchitecture.OCR.Domain\obj\Debug\net8.0\ref\CleanArchitecture.OCR.Domain.dll

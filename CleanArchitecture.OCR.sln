@@ -1,0 +1,45 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11123.170 d18.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.OCR.API", "src\CleanArchitecture.OCR.API\CleanArchitecture.OCR.API.csproj", "{3B04FAA3-C7EE-4F8F-AB61-A7E57E6AFF32}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.OCR.Application", "src\CleanArchitecture.OCR.Application\CleanArchitecture.OCR.Application.csproj", "{22A29B12-519F-46BF-950A-8C0DB7BCA3F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.OCR.Domain", "src\CleanArchitecture.OCR.Domain\CleanArchitecture.OCR.Domain.csproj", "{19A607B7-97B3-4B4A-AC65-0E2F70444F9C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.OCR.Infrastructure", "src\CleanArchitecture.OCR.Infrastructure\CleanArchitecture.OCR.Infrastructure.csproj", "{A796BBED-94F9-4D1A-A8CC-88BBF32A7854}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CleanArchitecture.OCR.Tests", "tests\CleanArchitecture.OCR.Tests\CleanArchitecture.OCR.Tests.csproj", "{9441DB2D-990F-41F1-B8BC-48D613F5F42E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3B04FAA3-C7EE-4F8F-AB61-A7E57E6AFF32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B04FAA3-C7EE-4F8F-AB61-A7E57E6AFF32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B04FAA3-C7EE-4F8F-AB61-A7E57E6AFF32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B04FAA3-C7EE-4F8F-AB61-A7E57E6AFF32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22A29B12-519F-46BF-950A-8C0DB7BCA3F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22A29B12-519F-46BF-950A-8C0DB7BCA3F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22A29B12-519F-46BF-950A-8C0DB7BCA3F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22A29B12-519F-46BF-950A-8C0DB7BCA3F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19A607B7-97B3-4B4A-AC65-0E2F70444F9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19A607B7-97B3-4B4A-AC65-0E2F70444F9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19A607B7-97B3-4B4A-AC65-0E2F70444F9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19A607B7-97B3-4B4A-AC65-0E2F70444F9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A796BBED-94F9-4D1A-A8CC-88BBF32A7854}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A796BBED-94F9-4D1A-A8CC-88BBF32A7854}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A796BBED-94F9-4D1A-A8CC-88BBF32A7854}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A796BBED-94F9-4D1A-A8CC-88BBF32A7854}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9441DB2D-990F-41F1-B8BC-48D613F5F42E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9441DB2D-990F-41F1-B8BC-48D613F5F42E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9441DB2D-990F-41F1-B8BC-48D613F5F42E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9441DB2D-990F-41F1-B8BC-48D613F5F42E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
