@@ -1,6 +1,0 @@
-C:\Users\HP\Downloads\CleanArchitecture.OCR\tests\CleanArchitecture.OCR.Tests\bin\Debug\net8.0\CoverletSourceRootsMapping_CleanArchitecture.OCR.Tests
-C:\Users\HP\Downloads\CleanArchitecture.OCR\tests\CleanArchitecture.OCR.Tests\obj\Debug\net8.0\CleanArchitecture.OCR.Tests.csproj.AssemblyReference.cache
-C:\Users\HP\Downloads\CleanArchitecture.OCR\tests\CleanArchitecture.OCR.Tests\obj\Debug\net8.0\CleanArchitecture.OCR.Tests.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\HP\Downloads\CleanArchitecture.OCR\tests\CleanArchitecture.OCR.Tests\obj\Debug\net8.0\CleanArchitecture.OCR.Tests.AssemblyInfoInputs.cache
-C:\Users\HP\Downloads\CleanArchitecture.OCR\tests\CleanArchitecture.OCR.Tests\obj\Debug\net8.0\CleanArchitecture.OCR.Tests.AssemblyInfo.cs
-C:\Users\HP\Downloads\CleanArchitecture.OCR\tests\CleanArchitecture.OCR.Tests\obj\Debug\net8.0\CleanArchitecture.OCR.Tests.csproj.CoreCompileInputs.cache
