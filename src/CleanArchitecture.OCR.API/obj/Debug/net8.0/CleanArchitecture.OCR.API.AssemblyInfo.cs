@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CleanArchitecture.OCR.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3c1fe25a1c0839db6811aca16bbc4c53b6ba6752")]
 [assembly: System.Reflection.AssemblyProductAttribute("CleanArchitecture.OCR.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CleanArchitecture.OCR.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

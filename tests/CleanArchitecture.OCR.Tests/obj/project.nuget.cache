@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "6Yw5bSMbzuw=",
+  "dgSpecHash": "b8aw17at29E=",
   "success": true,
-  "projectFilePath": "C:\\Users\\HP\\Downloads\\CleanArchitecture.OCR\\tests\\CleanArchitecture.OCR.Tests\\CleanArchitecture.OCR.Tests.csproj",
+  "projectFilePath": "C:\\Users\\HP\\Desktop\\AzureCognitive-Services-OCR\\tests\\CleanArchitecture.OCR.Tests\\CleanArchitecture.OCR.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\azure.ai.vision.imageanalysis\\1.0.0-beta.2\\azure.ai.vision.imageanalysis.1.0.0-beta.2.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\azure.core\\1.37.0\\azure.core.1.37.0.nupkg.sha512",

@@ -3701,11 +3701,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\Downloads\\CleanArchitecture.OCR\\src\\CleanArchitecture.OCR.API\\CleanArchitecture.OCR.API.csproj",
+      "projectUniqueName": "C:\\Users\\HP\\Desktop\\AzureCognitive-Services-OCR\\src\\CleanArchitecture.OCR.API\\CleanArchitecture.OCR.API.csproj",
       "projectName": "CleanArchitecture.OCR.API",
-      "projectPath": "C:\\Users\\HP\\Downloads\\CleanArchitecture.OCR\\src\\CleanArchitecture.OCR.API\\CleanArchitecture.OCR.API.csproj",
+      "projectPath": "C:\\Users\\HP\\Desktop\\AzureCognitive-Services-OCR\\src\\CleanArchitecture.OCR.API\\CleanArchitecture.OCR.API.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\HP\\Downloads\\CleanArchitecture.OCR\\src\\CleanArchitecture.OCR.API\\obj\\",
+      "outputPath": "C:\\Users\\HP\\Desktop\\AzureCognitive-Services-OCR\\src\\CleanArchitecture.OCR.API\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3728,11 +3728,11 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\HP\\Downloads\\CleanArchitecture.OCR\\src\\CleanArchitecture.OCR.Application\\CleanArchitecture.OCR.Application.csproj": {
-              "projectPath": "C:\\Users\\HP\\Downloads\\CleanArchitecture.OCR\\src\\CleanArchitecture.OCR.Application\\CleanArchitecture.OCR.Application.csproj"
+            "C:\\Users\\HP\\Desktop\\AzureCognitive-Services-OCR\\src\\CleanArchitecture.OCR.Application\\CleanArchitecture.OCR.Application.csproj": {
+              "projectPath": "C:\\Users\\HP\\Desktop\\AzureCognitive-Services-OCR\\src\\CleanArchitecture.OCR.Application\\CleanArchitecture.OCR.Application.csproj"
             },
-            "C:\\Users\\HP\\Downloads\\CleanArchitecture.OCR\\src\\CleanArchitecture.OCR.Infrastructure\\CleanArchitecture.OCR.Infrastructure.csproj": {
-              "projectPath": "C:\\Users\\HP\\Downloads\\CleanArchitecture.OCR\\src\\CleanArchitecture.OCR.Infrastructure\\CleanArchitecture.OCR.Infrastructure.csproj"
+            "C:\\Users\\HP\\Desktop\\AzureCognitive-Services-OCR\\src\\CleanArchitecture.OCR.Infrastructure\\CleanArchitecture.OCR.Infrastructure.csproj": {
+              "projectPath": "C:\\Users\\HP\\Desktop\\AzureCognitive-Services-OCR\\src\\CleanArchitecture.OCR.Infrastructure\\CleanArchitecture.OCR.Infrastructure.csproj"
             }
           }
         }
