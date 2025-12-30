@@ -20,8 +20,14 @@ builder.Services.SwaggerDocument(o =>
 builder.Services.Configure<AzureOCRSettings>(
     builder.Configuration.GetSection(AzureOCRSettings.SectionName));
 
+// Configure Tesseract OCR settings
+builder.Services.Configure<TesseractOCRSettings>(
+    builder.Configuration.GetSection(TesseractOCRSettings.SectionName));
+
 // Register application services
-builder.Services.AddScoped<IOCRService, OCRService>();
+// Uncomment the service you want to use:
+// builder.Services.AddScoped<IOCRService, OCRService>(); // Azure OCR
+builder.Services.AddScoped<IOCRService, TesseractOCRService>(); // Tesseract OCR
 builder.Services.AddScoped<IApplicationService, ApplicationService>();
 
 var app = builder.Build();

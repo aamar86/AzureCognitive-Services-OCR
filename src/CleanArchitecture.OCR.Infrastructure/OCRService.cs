@@ -14,16 +14,21 @@ public class OCRService : IOCRService
         _settings = settings.Value;
     }
 
-    public async Task<string> ExtractTextAsync(string imagePath)
+    public async Task<string> ExtractTextAsync(string filePath)
     {
-        if (string.IsNullOrWhiteSpace(imagePath))
+        return await ExtractTextAsync(filePath, DocumentType.Passport);
+    }
+
+    public async Task<string> ExtractTextAsync(string filePath, DocumentType documentType)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
         {
-            throw new ArgumentException("Image path cannot be empty", nameof(imagePath));
+            throw new ArgumentException("File path cannot be empty", nameof(filePath));
         }
 
-        if (!File.Exists(imagePath))
+        if (!File.Exists(filePath))
         {
-            throw new FileNotFoundException($"Image file not found: {imagePath}");
+            throw new FileNotFoundException($"File not found: {filePath}");
         }
 
         if (string.IsNullOrWhiteSpace(_settings.Endpoint) || string.IsNullOrWhiteSpace(_settings.ApiKey))
@@ -38,7 +43,7 @@ public class OCRService : IOCRService
             var client = new ImageAnalysisClient(new Uri(_settings.Endpoint), credential);
 
             // Read image file
-            using var imageStream = File.OpenRead(imagePath);
+            using var imageStream = File.OpenRead(filePath);
             var imageData = BinaryData.FromStream(imageStream);
 
             // Analyze image for text (OCR)

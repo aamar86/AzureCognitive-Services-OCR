@@ -16,5 +16,10 @@
     <PackageReference Include="FastEndpoints.Swagger" Version="5.31.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Copy tessdata folder to output directory -->
+    <None Include="tessdata\**\*" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
 

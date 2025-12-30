@@ -4,7 +4,8 @@ namespace CleanArchitecture.OCR.Application;
 
 public interface IApplicationService
 {
-    Task<string> ProcessOCRAsync(string imagePath);
+    Task<string> ProcessOCRAsync(string filePath);
+    Task<string> ProcessOCRAsync(string filePath, DocumentType documentType);
 }
 
 public class ApplicationService : IApplicationService
@@ -16,14 +17,25 @@ public class ApplicationService : IApplicationService
         _ocrService = ocrService;
     }
 
-    public async Task<string> ProcessOCRAsync(string imagePath)
+    public async Task<string> ProcessOCRAsync(string filePath)
     {
-        if (string.IsNullOrWhiteSpace(imagePath))
+        if (string.IsNullOrWhiteSpace(filePath))
         {
-            throw new ArgumentException("Image path cannot be empty", nameof(imagePath));
+            throw new ArgumentException("File path cannot be empty", nameof(filePath));
         }
 
-        var result = await _ocrService.ExtractTextAsync(imagePath);
+        var result = await _ocrService.ExtractTextAsync(filePath);
+        return result;
+    }
+
+    public async Task<string> ProcessOCRAsync(string filePath, DocumentType documentType)
+    {
+        if (string.IsNullOrWhiteSpace(filePath))
+        {
+            throw new ArgumentException("File path cannot be empty", nameof(filePath));
+        }
+
+        var result = await _ocrService.ExtractTextAsync(filePath, documentType);
         return result;
     }
 }
