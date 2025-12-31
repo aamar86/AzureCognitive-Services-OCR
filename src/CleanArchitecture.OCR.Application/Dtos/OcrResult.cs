@@ -7,5 +7,6 @@ public class OcrResult
     public string RawText { get; set; } = string.Empty;
     public PassportResult? Passport { get; set; }
     public EmiratesIdResult? EmiratesId { get; set; }
+    public UAETradeLicenseResult? UAETradeLicense { get; set; }
     public List<string> Errors { get; set; } = new();
 }

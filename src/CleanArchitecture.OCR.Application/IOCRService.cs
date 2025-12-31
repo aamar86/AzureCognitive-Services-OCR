@@ -3,7 +3,8 @@ namespace CleanArchitecture.OCR.Application;
 public enum DocumentType
 {
     Passport,
-    EmiratesID
+    EmiratesID,
+    UAETradeLicense
 }
 
 public interface IOCRService
