@@ -7,7 +7,6 @@ using Tesseract;
 using UglyToad.PdfPig;
 using UglyToad.PdfPig.Content;
 using PdfiumViewer;
-using PdfiumDocument = PdfiumViewer.PdfDocument;
 
 namespace CleanArchitecture.OCR.Infrastructure;
 
@@ -66,27 +65,49 @@ public class TesseractOCRService : IOCRService
 
     private async Task<string> ProcessPdfAsync(string pdfPath, DocumentType documentType)
     {
-        var extractedText = new System.Text.StringBuilder();
-        
         return await Task.Run(() =>
         {
             try
             {
-                // First, try to extract text directly from PDF (if it's text-based PDF)
+                // Extract text directly from PDF using PdfPig
                 using var document = UglyToad.PdfPig.PdfDocument.Open(pdfPath);
+                var extractedText = new System.Text.StringBuilder();
                 var hasText = false;
                 
                 foreach (var page in document.GetPages())
                 {
                     var pageText = page.Text;
                     
-                    // If PDF contains extractable text, use it
+                    // Extract text from the page
                     if (!string.IsNullOrWhiteSpace(pageText))
                     {
                         hasText = true;
                         extractedText.AppendLine($"--- Page {page.Number} ---");
                         extractedText.AppendLine(pageText);
                         extractedText.AppendLine();
+                    }
+                    else
+                    {
+                        // Try to extract text from words if page.Text is empty
+                        var words = page.GetWords();
+                        if (words.Any())
+                        {
+                            hasText = true;
+                            extractedText.AppendLine($"--- Page {page.Number} ---");
+                            
+                            // Group words by line (approximate based on Y position)
+                            var wordsByLine = words
+                                .OrderByDescending(w => w.BoundingBox.Bottom)
+                                .GroupBy(w => Math.Round(w.BoundingBox.Bottom, 0))
+                                .OrderByDescending(g => g.Key);
+                            
+                            foreach (var line in wordsByLine)
+                            {
+                                var lineText = string.Join(" ", line.OrderBy(w => w.BoundingBox.Left).Select(w => w.Text));
+                                extractedText.AppendLine(lineText);
+                            }
+                            extractedText.AppendLine();
+                        }
                     }
                 }
                 
@@ -95,50 +116,75 @@ public class TesseractOCRService : IOCRService
                 {
                     return extractedText.ToString().Trim();
                 }
+                
+                // If no text found, the PDF is likely image-based (scanned)
+                // Convert PDF pages to images and process with OCR
+                _logger?.LogInformation("PDF appears to be image-based. Converting pages to images for OCR processing.");
+                return ProcessImageBasedPdfAsync(pdfPath, documentType);
             }
-            catch (Exception ex)
+            catch (Exception ex) when (!(ex is InvalidOperationException))
             {
-                _logger?.LogWarning(ex, "Failed to extract text directly from PDF: {Error}", ex.Message);
+                // If PdfPig fails, try converting PDF to images
+                _logger?.LogWarning(ex, "Failed to extract text directly from PDF. Attempting to convert PDF to images: {Error}", ex.Message);
+                try
+                {
+                    return ProcessImageBasedPdfAsync(pdfPath, documentType);
+                }
+                catch (Exception conversionEx)
+                {
+                    _logger?.LogError(conversionEx, "Failed to process PDF as image-based: {Error}", conversionEx.Message);
+                    throw new InvalidOperationException(
+                        $"Failed to extract text from PDF. The PDF may be corrupted or image-based. " +
+                        $"Original error: {ex.Message}. Conversion error: {conversionEx.Message}", ex);
+                }
             }
-
-            // If no text found or extraction failed, render PDF pages to images and use OCR
-            _logger?.LogInformation("PDF appears to be image-based, rendering pages for OCR");
-            return ProcessImageBasedPdfAsync(pdfPath, documentType);
         });
     }
 
     private string ProcessImageBasedPdfAsync(string pdfPath, DocumentType documentType)
     {
         var extractedText = new System.Text.StringBuilder();
-        
+
         try
         {
-            using var document = PdfiumDocument.Load(pdfPath);
+            // Open PDF with PdfiumViewer
+            using var document = PdfiumViewer.PdfDocument.Load(pdfPath);
             var pageCount = document.PageCount;
-            
+
+            _logger?.LogInformation("Converting {PageCount} PDF pages to images for OCR", pageCount);
+
+            // Process each page - render at 300 DPI for good OCR quality
+            const int dpi = 300;
             for (int pageIndex = 0; pageIndex < pageCount; pageIndex++)
             {
-                // Render PDF page to image at 300 DPI for better OCR quality
-                const int dpi = 300;
-                using var image = document.Render(pageIndex, dpi, dpi, PdfRenderFlags.Annotations);
+                // Render page to bitmap at specified DPI
+                using var bitmap = document.Render(pageIndex, dpi, dpi, true);
                 
-                // Process image with Tesseract
-                var pageText = ProcessImageWithTesseract(image, documentType);
-                extractedText.AppendLine($"--- Page {pageIndex + 1} ---");
-                extractedText.AppendLine(pageText);
-                extractedText.AppendLine();
+                // Process the rendered image with OCR
+                var pageText = ProcessImageWithTesseract(bitmap, documentType);
+                
+                if (!string.IsNullOrWhiteSpace(pageText))
+                {
+                    extractedText.AppendLine($"--- Page {pageIndex + 1} ---");
+                    extractedText.AppendLine(pageText);
+                    extractedText.AppendLine();
+                }
             }
+
+            var result = extractedText.ToString().Trim();
+            if (string.IsNullOrWhiteSpace(result))
+            {
+                throw new InvalidOperationException("No text could be extracted from the PDF pages using OCR.");
+            }
+
+            return result;
         }
         catch (Exception ex)
         {
-            _logger?.LogError(ex, "Error rendering PDF pages to images");
+            _logger?.LogError(ex, "Error processing image-based PDF: {Error}", ex.Message);
             throw new InvalidOperationException(
-                "Failed to process image-based PDF. Ensure PdfiumViewer native dependencies (pdfium.dll) are installed. " +
-                "For Windows, download from: https://github.com/pvginkel/PdfiumViewer/releases. " +
-                "Original error: " + ex.Message, ex);
+                $"Failed to process PDF as image-based document: {ex.Message}", ex);
         }
-
-        return extractedText.ToString().Trim();
     }
 
     private async Task<string> ProcessImageAsync(string imagePath, DocumentType documentType)

@@ -14,12 +14,24 @@
   <ItemGroup>
     <PackageReference Include="FastEndpoints" Version="5.31.0" />
     <PackageReference Include="FastEndpoints.Swagger" Version="5.31.0" />
+    <PackageReference Include="PdfiumViewer.Native.x86_64.v8-xfa" Version="2018.4.8.256" />
   </ItemGroup>
 
   <ItemGroup>
     <!-- Copy tessdata folder to output directory -->
     <None Include="tessdata\**\*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
+
+  <Target Name="CopyNativeDlls" AfterTargets="Build">
+    <PropertyGroup>
+      <InfrastructureBinPath>$(MSBuildThisFileDirectory)..\CleanArchitecture.OCR.Infrastructure\bin\$(Configuration)\$(TargetFramework)</InfrastructureBinPath>
+    </PropertyGroup>
+    <ItemGroup>
+      <NativeDlls Include="$(InfrastructureBinPath)\x64\pdfium.dll" Condition="Exists('$(InfrastructureBinPath)\x64\pdfium.dll')" />
+    </ItemGroup>
+    <Copy SourceFiles="@(NativeDlls)" DestinationFolder="$(OutDir)x64\" SkipUnchangedFiles="true" Condition="@(NativeDlls->Count()) > 0" />
+    <Message Text="Copied pdfium.dll to $(OutDir)x64\" Condition="@(NativeDlls->Count()) > 0" Importance="high" />
+  </Target>
 
 </Project>
 

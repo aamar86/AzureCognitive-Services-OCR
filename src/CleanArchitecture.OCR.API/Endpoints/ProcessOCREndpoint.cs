@@ -56,7 +56,7 @@ public class ProcessOCREndpoint : Endpoint<ProcessImageRequest, ProcessOCRRespon
             }
 
             // Process OCR
-            string result;
+            OcrResult result;
             if (req.DocumentType.HasValue)
             {
                 result = await _applicationService.ProcessOCRAsync(filePath, req.DocumentType.Value);
@@ -79,7 +79,15 @@ public class ProcessOCREndpoint : Endpoint<ProcessImageRequest, ProcessOCRRespon
                 }
             }
             
-            await SendOkAsync(new ProcessOCRResponse { Result = result }, ct);
+            await SendOkAsync(new ProcessOCRResponse 
+            { 
+                IsValid = result.IsValid,
+                DocumentType = result.DocumentType,
+                RawText = result.RawText,
+                Passport = result.Passport,
+                EmiratesId = result.EmiratesId,
+                Errors = result.Errors
+            }, ct);
         }
         catch (Exception ex)
         {
@@ -97,6 +105,11 @@ public class ProcessImageRequest
 
 public class ProcessOCRResponse
 {
-    public string Result { get; set; } = string.Empty;
+    public bool IsValid { get; set; }
+    public DocumentType DocumentType { get; set; }
+    public string RawText { get; set; } = string.Empty;
+    public PassportResult? Passport { get; set; }
+    public EmiratesIdResult? EmiratesId { get; set; }
+    public List<string> Errors { get; set; } = new();
 }
 
