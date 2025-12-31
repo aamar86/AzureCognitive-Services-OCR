@@ -29,6 +29,7 @@ builder.Services.Configure<TesseractOCRSettings>(
 // builder.Services.AddScoped<IOCRService, OCRService>(); // Azure OCR
 builder.Services.AddScoped<IOCRService, TesseractOCRService>(); // Tesseract OCR
 builder.Services.AddScoped<IDocumentParsingService, DocumentParsingService>();
+builder.Services.AddScoped<IDocumentTypeDetectionService, DocumentTypeDetectionService>();
 builder.Services.AddScoped<IApplicationService, ApplicationService>();
 
 var app = builder.Build();
