@@ -134,14 +134,182 @@ public class DocumentParsingService : IDocumentParsingService
 
     private EmiratesIdResult ParseEmiratesId(string text)
     {
-        var idMatch = Regex.Match(text, @"784-\d{4}-\d{7}-\d");
+        var result = new EmiratesIdResult();
+        var normalizedText = text.Replace("\r\n", "\n").Replace("\r", "\n");
+
+        // Extract Emirates ID number - supports both formats: with hyphens (784-XXXX-XXXXXXX-X) and without (784XXXXXXXXXXXXX)
+        var idPatternWithHyphens = @"784-\d{4}-\d{7}-\d";
+        var idPatternWithoutHyphens = @"784\d{12}"; // 15 digits total: 784 (3) + 12 more digits
+        
+        var idMatch = Regex.Match(text, idPatternWithHyphens);
+        if (!idMatch.Success)
+        {
+            idMatch = Regex.Match(text, idPatternWithoutHyphens);
+        }
+
         if (!idMatch.Success)
             throw new InvalidOperationException("Emirates ID number not detected");
 
-        return new EmiratesIdResult
+        // Format the ID number consistently (add hyphens if missing)
+        var idNumber = idMatch.Value;
+        if (!idNumber.Contains("-") && idNumber.Length == 15)
         {
-            IdNumber = idMatch.Value
+            // Format as 784-XXXX-XXXXXXX-X
+            idNumber = $"{idNumber.Substring(0, 3)}-{idNumber.Substring(3, 4)}-{idNumber.Substring(7, 7)}-{idNumber.Substring(14, 1)}";
+        }
+        result.IdNumber = idNumber;
+
+        // Extract Name - Look for patterns like "Name" followed by the name
+        // Handle both spaced names and concatenated names from OCR
+        var namePatterns = new[]
+        {
+            @"Name\s+([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)+)", // Name with spaces
+            @"Name([A-Z][A-Za-z]+[A-Z][A-Za-z]+)", // Name concatenated (NameMuhammadAamar...)
+            @"(?:Full\s*Name|Name\s*of\s*Holder)[\s:]*([A-Z][A-Za-z]+(?:\s+[A-Z][A-Za-z]+)+)"
         };
+
+        foreach (var pattern in namePatterns)
+        {
+            var match = Regex.Match(text, pattern, RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                var name = match.Groups[1].Value.Trim();
+                
+                // If name is concatenated (no spaces but has multiple capital letters), split it
+                if (!name.Contains(" ") && Regex.IsMatch(name, @"[A-Z][a-z]+[A-Z]"))
+                {
+                    // Split concatenated name: insert space before capital letters (except first)
+                    name = Regex.Replace(name, @"([a-z])([A-Z])", "$1 $2");
+                }
+                
+                // Clean up OCR artifacts - remove extra characters that might be OCR errors
+                name = Regex.Replace(name, @"[^A-Za-z\s]", " ").Trim();
+                name = Regex.Replace(name, @"\s+", " "); // Normalize whitespace
+                if (name.Length > 3 && name.Length < 100)
+                {
+                    result.FullName = name;
+                    break;
+                }
+            }
+        }
+
+        // If name not found with patterns, try to extract from text after "Name" keyword (handling concatenated)
+        if (string.IsNullOrWhiteSpace(result.FullName))
+        {
+            var nameMatch = Regex.Match(text, @"Name([A-Z][A-Za-z]{2,}(?:[A-Z][A-Za-z]{2,}){1,})", RegexOptions.IgnoreCase);
+            if (nameMatch.Success)
+            {
+                var name = nameMatch.Groups[1].Value.Trim();
+                // Split concatenated name
+                if (!name.Contains(" ") && Regex.IsMatch(name, @"[A-Z][a-z]+[A-Z]"))
+                {
+                    name = Regex.Replace(name, @"([a-z])([A-Z])", "$1 $2");
+                }
+                name = Regex.Replace(name, @"[^A-Za-z\s]", " ").Trim();
+                name = Regex.Replace(name, @"\s+", " ");
+                if (name.Length > 3)
+                {
+                    result.FullName = name;
+                }
+            }
+        }
+
+        // Extract Date of Birth - Look for "Date of Birth" or "DOB" followed by date
+        var dobPatterns = new[]
+        {
+            @"(?:Date\s*of\s*Birth|DOB|Birth\s*Date)[\s:]*(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})",
+            @"(?:Date\s*of\s*Birth|DOB)[\s:]*(\d{8})", // Format: DDMMYYYY
+            @"DateofBirth\s*(\d{8,10})" // OCR might miss spaces or add extra digits
+        };
+
+        foreach (var pattern in dobPatterns)
+        {
+            var match = Regex.Match(text, pattern, RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                var dateStr = match.Groups[1].Value;
+                
+                // Handle DDMMYYYY format (8 digits)
+                if (dateStr.Length == 8 && !dateStr.Contains("-") && !dateStr.Contains("/"))
+                {
+                    dateStr = $"{dateStr.Substring(0, 2)}/{dateStr.Substring(2, 2)}/{dateStr.Substring(4, 4)}";
+                    result.DateOfBirth = ParseDate(dateStr);
+                    if (result.DateOfBirth.HasValue) break;
+                }
+                // Handle longer sequences (9-10 digits) - might be OCR error, try to extract valid 8-digit date
+                else if (dateStr.Length >= 8 && dateStr.Length <= 10 && !dateStr.Contains("-") && !dateStr.Contains("/"))
+                {
+                    // Try first 8 digits
+                    var date8 = dateStr.Substring(0, 8);
+                    var formattedDate = $"{date8.Substring(0, 2)}/{date8.Substring(2, 2)}/{date8.Substring(4, 4)}";
+                    result.DateOfBirth = ParseDate(formattedDate);
+                    if (result.DateOfBirth.HasValue) break;
+                    
+                    // If that doesn't work, try skipping first digit (in case OCR added extra digit at start)
+                    if (dateStr.Length >= 9)
+                    {
+                        date8 = dateStr.Substring(1, 8);
+                        formattedDate = $"{date8.Substring(0, 2)}/{date8.Substring(2, 2)}/{date8.Substring(4, 4)}";
+                        result.DateOfBirth = ParseDate(formattedDate);
+                        if (result.DateOfBirth.HasValue) break;
+                    }
+                }
+                else
+                {
+                    result.DateOfBirth = ParseDate(dateStr);
+                    if (result.DateOfBirth.HasValue) break;
+                }
+            }
+        }
+
+        // Extract Nationality
+        var nationalityPatterns = new[]
+        {
+            @"Nationality\s*([A-Z][A-Za-z]+)",
+            @"Nationality\s*([A-Z]{2,})",
+            @"Nationality\s*([A-Za-z\s]+)"
+        };
+
+        foreach (var pattern in nationalityPatterns)
+        {
+            var match = Regex.Match(text, pattern, RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                var nationality = match.Groups[1].Value.Trim();
+                nationality = Regex.Replace(nationality, @"[^A-Za-z\s]", "").Trim();
+                if (!string.IsNullOrWhiteSpace(nationality) && nationality.Length < 50)
+                {
+                    result.Nationality = nationality;
+                    break;
+                }
+            }
+        }
+
+        // Extract Expiry Date - Look for "Expiry Date" or "Expry Date" (OCR might miss characters)
+        var expiryPatterns = new[]
+        {
+            @"(?:Expiry\s*Date|Expry\s*Date|Expires|Valid\s*Until)[\s:]*(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})",
+            @"(?:Expiry\s*Date|Expry\s*Date)[\s:]*(\d{8})", // Format: DDMMYYYY
+            @"ExpryDate\s*[^\d]*(\d{8})" // OCR might miss spaces
+        };
+
+        foreach (var pattern in expiryPatterns)
+        {
+            var match = Regex.Match(text, pattern, RegexOptions.IgnoreCase);
+            if (match.Success)
+            {
+                var dateStr = match.Groups[1].Value;
+                // Handle DDMMYYYY format
+                if (dateStr.Length == 8 && !dateStr.Contains("-") && !dateStr.Contains("/"))
+                {
+                    dateStr = $"{dateStr.Substring(0, 2)}/{dateStr.Substring(2, 2)}/{dateStr.Substring(4, 4)}";
+                }
+                result.ExpiryDate = ParseDate(dateStr);
+                if (result.ExpiryDate.HasValue) break;
+            }
+        }
+
+        return result;
     }
 
     // ===================== UAE TRADE LICENSE =====================

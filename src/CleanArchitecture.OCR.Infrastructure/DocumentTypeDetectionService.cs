@@ -56,15 +56,18 @@ public class DocumentTypeDetectionService : IDocumentTypeDetectionService
 
     private bool IsEmiratesId(string text)
     {
-        // Emirates ID has a specific number pattern: 784-XXXX-XXXXXXX-X
-        var emiratesIdPattern = @"784-\d{4}-\d{7}-\d";
-        if (Regex.IsMatch(text, emiratesIdPattern))
+        // Emirates ID has a specific number pattern: 784-XXXX-XXXXXXX-X or 784XXXXXXXXXXXXX (15 digits starting with 784)
+        // Pattern matches with or without hyphens
+        var emiratesIdPatternWithHyphens = @"784-\d{4}-\d{7}-\d";
+        var emiratesIdPatternWithoutHyphens = @"784\d{12}"; // 15 digits total: 784 (3) + 12 more digits
+        
+        if (Regex.IsMatch(text, emiratesIdPatternWithHyphens) || Regex.IsMatch(text, emiratesIdPatternWithoutHyphens))
         {
             return true;
         }
 
         // Additional check: Look for Emirates ID specific keywords
-        var hasEmiratesIdKeywords = Regex.IsMatch(text, @"\b(EMIRATES\s*ID|EMIRATES\s*IDENTITY|UNITED\s*ARAB\s*EMIRATES\s*ID)\b", RegexOptions.IgnoreCase);
+        var hasEmiratesIdKeywords = Regex.IsMatch(text, @"\b(EMIRATES\s*ID|EMIRATES\s*IDENTITY|UNITED\s*ARAB\s*EMIRATES\s*ID|RESIDENT\s*IDENTITY\s*CARD|FEDERAL\s*AUTHORITY\s*FOR\s*IDENTITY)\b", RegexOptions.IgnoreCase);
         
         return hasEmiratesIdKeywords;
     }
