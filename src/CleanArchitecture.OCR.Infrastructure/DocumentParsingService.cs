@@ -363,11 +363,17 @@ public class DocumentParsingService : IDocumentParsingService
         }
 
         // Extract Expiry Date
+        // Support multiple date formats: YYYY-MM-DD, DD-MM-YYYY, MM-DD-YYYY
+        // Also support Arabic labels: تاريخ الانتهاء
         var expiryDatePatterns = new[]
         {
-            @"(?:Expiry\s*Date|Expires|Valid\s*Until|Expiration)[\s:]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})",
-            @"(?:Expiry|Expires)[\s:]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})",
-            @"(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})" // Generic date pattern (last resort)
+            // YYYY-MM-DD format (ISO format used in UAE Trade Licenses)
+            @"(?:Expiry\s*Date|Expires|Valid\s*Until|Expiration|تاريخ\s*الانتهاء)[\s:]+(\d{4}[-/]\d{1,2}[-/]\d{1,2})",
+            // DD-MM-YYYY or MM-DD-YYYY format
+            @"(?:Expiry\s*Date|Expires|Valid\s*Until|Expiration|تاريخ\s*الانتهاء)[\s:]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})",
+            // Generic patterns without label (check for future dates only)
+            @"(\d{4}[-/]\d{1,2}[-/]\d{1,2})",  // YYYY-MM-DD format
+            @"(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})"  // DD-MM-YYYY or MM-DD-YYYY format
         };
 
         foreach (var pattern in expiryDatePatterns)
@@ -377,6 +383,7 @@ public class DocumentParsingService : IDocumentParsingService
             {
                 var dateStr = match.Groups[1].Value;
                 var parsedDate = ParseDate(dateStr);
+                // Only accept future dates as expiry dates
                 if (parsedDate.HasValue && parsedDate.Value > DateTime.Now)
                 {
                     result.ExpiryDate = parsedDate;
@@ -387,9 +394,14 @@ public class DocumentParsingService : IDocumentParsingService
         }
 
         // Extract Issue Date
+        // Support multiple date formats: YYYY-MM-DD, DD-MM-YYYY, MM-DD-YYYY
+        // Also support Arabic labels: تاريخ الاصدار
         var issueDatePatterns = new[]
         {
-            @"(?:Issue\s*Date|Issued\s*On|Date\s*of\s*Issue)[\s:]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})"
+            // YYYY-MM-DD format (ISO format used in UAE Trade Licenses)
+            @"(?:Issue\s*Date|Issued\s*On|Date\s*of\s*Issue|تاريخ\s*الاصدار)[\s:]+(\d{4}[-/]\d{1,2}[-/]\d{1,2})",
+            // DD-MM-YYYY or MM-DD-YYYY format
+            @"(?:Issue\s*Date|Issued\s*On|Date\s*of\s*Issue|تاريخ\s*الاصدار)[\s:]+(\d{1,2}[-/]\d{1,2}[-/]\d{2,4})"
         };
 
         foreach (var pattern in issueDatePatterns)

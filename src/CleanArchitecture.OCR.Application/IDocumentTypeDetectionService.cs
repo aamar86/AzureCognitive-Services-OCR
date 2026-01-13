@@ -5,3 +5,4 @@ public interface IDocumentTypeDetectionService
     DocumentType DetectDocumentType(string rawText);
 }
 
+
