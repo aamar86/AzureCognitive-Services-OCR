@@ -14,15 +14,18 @@ public class ApplicationService : IApplicationService
     private readonly IOCRService _ocrService;
     private readonly IDocumentParsingService _documentParsingService;
     private readonly IDocumentTypeDetectionService _documentTypeDetectionService;
+    private readonly ITextEnhancementService? _textEnhancementService;
 
     public ApplicationService(
         IOCRService ocrService, 
         IDocumentParsingService documentParsingService,
-        IDocumentTypeDetectionService documentTypeDetectionService)
+        IDocumentTypeDetectionService documentTypeDetectionService,
+        ITextEnhancementService? textEnhancementService = null)
     {
         _ocrService = ocrService;
         _documentParsingService = documentParsingService;
         _documentTypeDetectionService = documentTypeDetectionService;
+        _textEnhancementService = textEnhancementService;
     }
 
     public async Task<OcrResult> ProcessOCRAsync(string filePath)
@@ -30,7 +33,13 @@ public class ApplicationService : IApplicationService
         ValidateFilePath(filePath);
 
         var rawText = await _ocrService.ExtractTextAsync(filePath);
-        return _documentParsingService.Parse(rawText, DocumentType.Passport);
+        
+        // Enhance text using Gemma LLM if available
+        var enhancedText = _textEnhancementService != null
+            ? await _textEnhancementService.EnhanceTextAsync(rawText, DocumentType.Passport)
+            : rawText;
+        
+        return _documentParsingService.Parse(enhancedText, DocumentType.Passport);
     }
 
     public async Task<OcrResult> ProcessOCRAsync(string filePath, DocumentType documentType)
@@ -41,8 +50,13 @@ public class ApplicationService : IApplicationService
         // Extract text first
         var rawText = await _ocrService.ExtractTextAsync(filePath, documentType);
 
-        // Detect the actual document type from the extracted text
-        var detectedType = _documentTypeDetectionService.DetectDocumentType(rawText);
+        // Enhance text using Gemma LLM if available
+        var enhancedText = _textEnhancementService != null
+            ? await _textEnhancementService.EnhanceTextAsync(rawText, documentType)
+            : rawText;
+
+        // Detect the actual document type from the enhanced text
+        var detectedType = _documentTypeDetectionService.DetectDocumentType(enhancedText);
 
         // Validate that the detected type matches the expected type
         if (detectedType != documentType)
@@ -51,7 +65,7 @@ public class ApplicationService : IApplicationService
         }
 
         // Parse the document with the expected type
-        return _documentParsingService.Parse(rawText, documentType);
+        return _documentParsingService.Parse(enhancedText, documentType);
     }
 
     private void ValidateFilePath(string filePath)
